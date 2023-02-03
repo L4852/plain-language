@@ -1,0 +1,3 @@
+expr : (TERM ADD | SUB)*
+term: (FACT ADD | SUB)*
+fact: INT | FLT

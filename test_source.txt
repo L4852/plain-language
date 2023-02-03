@@ -1,0 +1,4 @@
+28 + 3 ** 5; $ Hello, this is a comment on a line!
+$ 1 + 2 * 3;
+$ 5 - 8 * 6;
+$ 1 + 5..2;
