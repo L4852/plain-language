@@ -1,6 +1,8 @@
 expr : (TERM ADD | SUB)*
+     : KYW:[TYPE] IDN
+     : KYW:[TYPE] IDN EQU [TYPE:VALUE]
 
 term: (FACT ADD | SUB)*
 
-fact: INT | FLT
+fact: INT | FLT | IDN | KYW
     : LPA expr RPA

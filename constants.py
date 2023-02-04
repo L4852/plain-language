@@ -16,6 +16,9 @@ class Constants:
     TYPE_LPA = 'LPA'
     TYPE_RPA = 'RPA'
     TYPE_EOF = 'EOF'
+    
+    TYPE_KYW = 'KYW'
+    TYPE_IDN = 'IDN'
 
     OPERATORS = {
         '+': TYPE_ADD,
