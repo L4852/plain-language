@@ -13,6 +13,8 @@ class Constants:
     TYPE_DIV = 'DIV'
     TYPE_ADD = 'ADD'
     TYPE_SUB = 'SUB'
+    TYPE_LPA = 'LPA'
+    TYPE_RPA = 'RPA'
     TYPE_EOF = 'EOF'
 
     OPERATORS = {

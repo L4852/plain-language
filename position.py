@@ -9,7 +9,7 @@ class Position:
         self.line = 1
         self.column = 0
 
-        self.filename = ""
+        self.filename = "<stdin>"
 
     def advance(self, line_break: bool = False) -> None:
         self.main_pos += 1

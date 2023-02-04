@@ -58,6 +58,7 @@ class Tokenizer:
             # is not a number.
             if num_buffer and self.char not in Constants.NUM_CHARS:
                 num_length = len(num_buffer)
+
                 if has_dot:
                     token_list.append(Token(Constants.TYPE_FLT, float(num_buffer), num_length))
                 else:
@@ -67,6 +68,8 @@ class Tokenizer:
 
             # Skip over character if it is a tab, space, or newline
             if self.char in ' \t\n' or comment_active:
+                # Keep track of the spaces to align Parser traceback
+
                 if self.char == '\n':
                     self.next()
                     start_of_line_index = self.position.main_pos
@@ -136,20 +139,3 @@ class Tokenizer:
         token_list.append(Token(Constants.TYPE_EOF))
         self.token_list = token_list
         return token_list
-
-    def print_token_list(self):
-        print(self.token_list)
-
-
-def test():
-    imported_string: str
-    with open("test_source.txt", 'r') as f:
-        imported_string = f.read()
-
-    a = Tokenizer(imported_string, filename="test_source.txt")
-    a.tokenize()
-    a.print_token_list()
-
-    return a.token_list
-
-
