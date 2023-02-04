@@ -74,7 +74,7 @@ class Tokenizer:
                 if idn_buffer not in Constants.KEYWORDS:
                     token_list.append(Token(Constants.TYPE_IDN, idn_buffer, idn_length))
                 else:
-                    token_list.append(Token(Constants.TYPE_KEYWORD, idn_buffer, idn_length))
+                    token_list.append(Token(Constants.TYPE_KYW, idn_buffer, idn_length))
                 idn_buffer = ""
 
             # Skip over character if it is a tab, space, or newline
