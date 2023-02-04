@@ -47,6 +47,9 @@ class Tokenizer:
 
         # Comment active flag
         comment_active: bool = False
+        
+        # Identifier / keyword buffer
+        idn_buffer = ""
 
         # Main tokenizer loop
         while self.char is not None:
@@ -65,6 +68,14 @@ class Tokenizer:
                     token_list.append(Token(Constants.TYPE_INT, int(num_buffer), num_length))
                 num_buffer = ""
                 has_dot = False
+            elif idn_buffer and self.char in " \t\n":
+                idn_length = len(idn_buffer)
+                
+                if idn_buffer not in Constants.KEYWORDS:
+                    token_list.append(Token(Constants.TYPE_IDN, idn_buffer, idn_length))
+                else:
+                    token_list.append(Token(Constants.TYPE_KEYWORD, idn_buffer, idn_length))
+                idn_buffer = ""
 
             # Skip over character if it is a tab, space, or newline
             if self.char in ' \t\n' or comment_active:
@@ -83,7 +94,7 @@ class Tokenizer:
             elif self.char == '$':
                 comment_active = True
             # Check if a valid int or float can be created
-            elif self.char in Constants.NUM_CHARS:
+            elif self.char in Constants.NUM_CHARS and not (idn_buffer):
                 if self.char == Constants.NUMPOINT:
                     # Check if point already exists in the number buffer
                     if not has_dot:
@@ -117,6 +128,8 @@ class Tokenizer:
             elif self.char in Constants.TYPE_SYMBOLS:
                 token_list.append(Token(Constants.TYPE_SYMBOLS[self.char]))
                 self.next()
+            elif self.char in Constants.VALID_IDN:
+                idn_buffer += self.char
 
             # Print the error if it exists after the end of the current line is reached
             if error_encountered:
