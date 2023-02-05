@@ -9,3 +9,5 @@ var b = coolNum + 1; $ Initialize another variable;
 b; $ Print a variable;
 
 coolNum; $ Print another variable;
+
+var a = hello world!

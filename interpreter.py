@@ -57,11 +57,16 @@ class Interpreter:
                 return self._visit(node.left) * self._visit(node.right)
             elif operator_type == Constants.TYPE_DIV:
                 denominator = self._visit(node.right)
+                numerator = self._visit(node.left)
 
                 if denominator == 0:
                     return NewRuntimeError("Division by zero", error_line_number=node.right.node.line,
                                            context=self.context, filename=self.filename).raise_error()
-                return self._visit(node.left) / denominator
+
+                if isinstance(denominator, str) or isinstance(numerator, str):
+                    return NewRuntimeError("unsupported operation '/' for str, int", error_line_number=node.right.node.line,
+                                           context=self.context, filename=self.filename).raise_error()
+                return numerator / denominator
         elif isinstance(node, UnaryOperationNode):
             if node.operator.type == Constants.TYPE_SUB:
                 return -1 * self._visit(node.factor)

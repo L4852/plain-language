@@ -54,3 +54,8 @@ class VariableInitializationNode(VariableAssignmentNode):
 class VariableNode:
     def __init__(self, token):
         self.node = token
+
+
+class StringNode(NumberNode):
+    def __init__(self, token):
+        super().__init__(token)

@@ -1,7 +1,7 @@
 from constants import Constants
 from error import InvalidSyntaxError
 from nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignmentNode, VariableNode, \
-    VariableDeclarationNode, VariableInitializationNode
+    VariableDeclarationNode, VariableInitializationNode, StringNode
 from position import Position
 
 
@@ -118,6 +118,9 @@ class Parser:
         elif token.type == Constants.TYPE_IDN:
             self.next()
             return result.success(VariableNode(token))
+        elif token.type == Constants.TYPE_STR:
+            self.next()
+            return result.success(StringNode(token))
 
         new_error = InvalidSyntaxError("invalid syntax", self.position.copy(), self.ctoken.width)
         new_error.set_error_line(self.source[self.position.line - 1], [k.width for k in self.token_list], point=False)

@@ -38,6 +38,13 @@ class Error:
                 active_context = active_context.parent_context
         else:
             full_traceback_message = f"File \"{self.pos.filename}\", line {self.pos.line}, column {self.pos.column}\n\t\t"
+            arrow_pointer = generate_arrow_string('\t\t', self.pos.column + 1, self.error_width)
+            code_pointer: str = f"{self.error_line}\n{arrow_pointer}"  # Pointer pointing to error in code codes here.
+            print(self.error_line, 'hi')
+            error_message: str = f"{self.type}: {self.message}\n"
+            full_message: str = traceback_header + full_traceback_message + code_pointer + error_message
+            print(full_message)
+            return
 
         error_message: str = f"{self.type}: {self.message}\n"
 

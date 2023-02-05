@@ -7,6 +7,8 @@ class Constants:
 
     NUMPOINT = '.'
 
+    STRING_QUOTES = "'"
+
     KW_INT = 'int'
     KW_FLT = 'flt'
     KW_BOL = 'bol'
@@ -38,6 +40,8 @@ class Constants:
 
     TYPE_SMC = 'SMC'
     TYPE_EQU = 'EQU'
+
+    TYPE_STR = 'STR'
 
     OPERATORS = {
         '+': TYPE_ADD,

@@ -5,5 +5,5 @@ expr : (TERM ADD | SUB)*
 
 term: (FACT MUL | DIV)*
 
-fact: INT | FLT | IDN | KYW
+fact: INT | FLT | IDN | KYW | STR
     : LPA expr RPA

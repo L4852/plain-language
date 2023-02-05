@@ -12,12 +12,19 @@ class Tokenizer:
         self.index = self.position.main_pos
         self.position.filename = filename
         self.char = None
+        self.delin_source = None
 
         self.token_list = None
 
         self.debug_mode = debug_mode
 
         self.next()
+
+        self.delineate_source()
+
+    def delineate_source(self) -> None:
+        separated_source = [k + '\n' for k in self.source.split('\n')]
+        self.delin_source = separated_source
 
     def next(self) -> None:
         """
@@ -53,13 +60,50 @@ class Tokenizer:
         # Identifier / keyword buffer
         idn_buffer = ""
 
+        # String buffer
+        string_buffer = ""
+        string_active = False
+
         # Main tokenizer loop
         while self.char is not None:
             # Initialize line start flag location if at file start
             if start_of_line_index == -1:
                 start_of_line_index = 0
 
+            if string_active:
+                if self.char == Constants.STRING_QUOTES:
+                    string_length = len(string_buffer)
 
+                    token_list.append(
+                        Token(Constants.TYPE_STR, string_buffer, string_length, line_number=self.position.line))
+
+                    string_buffer = ""
+                    string_active = False
+                    self.next()
+
+                    if self.char is None and not error_encountered:
+                        error_encountered = InvalidCharacterError(
+                            "Missing ';' at end of statement",
+                            self.position.copy()
+                        )
+                        error_encountered.set_error_line(self.delin_source[self.position.line - 1])
+                        error_encountered.raise_error()
+                        return []
+
+                else:
+                    string_buffer += self.char
+                    self.next()
+
+                    if self.char is None:
+                        if not error_encountered:
+                            error_encountered = InvalidCharacterError(
+                                'Unexpected EOL when scanning string literal',
+                                self.position.copy()
+                            )
+                            error_encountered.set_error_line(self.delin_source[self.position.line - 1])
+                            error_encountered.raise_error()
+                            return []
+                    continue
 
             # Check if number buffer is not empty, terminates number and creates new Token object if current character
             # is not a number.
@@ -72,7 +116,7 @@ class Tokenizer:
                     token_list.append(Token(Constants.TYPE_INT, int(num_buffer), num_length, line_number=self.position.line))
                 num_buffer = ""
                 has_dot = False
-            elif idn_buffer and self.char not in Constants.VALID_IDN:
+            elif idn_buffer and self.char not in Constants.VALID_IDN and not string_buffer:
                 idn_length = len(idn_buffer)
 
                 if idn_buffer not in Constants.KEYWORDS:
@@ -129,6 +173,10 @@ class Tokenizer:
                     num_buffer += self.char
 
                 self.next()
+            elif self.char == Constants.STRING_QUOTES and not string_active:
+                self.next()
+                string_active = True
+
             # Append symbol with corresponding type in Constants.TYPE_SYMBOLS
             elif self.char in Constants.TYPE_SYMBOLS and not comment_active:
                 token_list.append(Token(Constants.TYPE_SYMBOLS[self.char], line_number=self.position.line))
