@@ -15,8 +15,9 @@ class Constants:
     KW_CEL = 'else'
     KW_CWH = 'while'
     KW_CFR = 'for'
+    KW_VAR = 'var'
 
-    KEYWORDS = [KW_INT, KW_FLT, KW_BOL, KW_STR, KW_CIF, KW_CWH, KW_CFR]
+    KEYWORDS = [KW_CIF, KW_CWH, KW_CFR, KW_VAR]
 
     KW_DATA_TYPES = [KW_INT, KW_FLT, KW_BOL, KW_STR]
 
@@ -29,6 +30,8 @@ class Constants:
     TYPE_LPA = 'LPA'
     TYPE_RPA = 'RPA'
     TYPE_EOF = 'EOF'
+
+    TYPE_INC = 'INC'
     
     TYPE_KYW = 'KYW'
     TYPE_IDN = 'IDN'

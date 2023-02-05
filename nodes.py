@@ -29,13 +29,26 @@ class UnaryOperationNode:
         return f"({self.operator}, {self.factor})"
 
 
+class VariableDeclarationNode:
+    def __init__(self, identifier):
+        self.identifier = identifier
+
+    def __repr__(self):
+        return f"[{self.identifier} <-+]"
+
+
 class VariableAssignmentNode:
     def __init__(self, identifier, expression):
         self.identifier = identifier
         self.expression = expression
 
     def __repr__(self):
-        return f"[{self.identifier} -> {self.expression}]"
+        return f"[{self.identifier} <- {self.expression}]"
+
+
+class VariableInitializationNode(VariableAssignmentNode):
+    def __init__(self, identifier, expression):
+        super().__init__(identifier, expression)
 
 
 class VariableNode:

@@ -1,6 +1,7 @@
 from constants import Constants
 from error import InvalidSyntaxError
-from nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignmentNode, VariableNode
+from nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignmentNode, VariableNode, \
+    VariableDeclarationNode, VariableInitializationNode
 from position import Position
 
 
@@ -28,7 +29,7 @@ class ParseResult:
 
 
 class Parser:
-    def __init__(self, token_list, source: str = None):
+    def __init__(self, token_list, source: str = None, debug_mode = False):
         self.source = source
         self.token_list = token_list
         self.tkl_len = len(token_list)
@@ -39,6 +40,8 @@ class Parser:
         self.line_token_index = 0
 
         self.delineate_source()
+
+        self.debug_mode = debug_mode
 
         self.next()
 
@@ -52,6 +55,9 @@ class Parser:
         """
         self.index += 1
         self.ctoken = self.token_list[self.index] if self.index < len(self.token_list) else None
+
+    def lookahead(self):
+        return self.token_list[self.index + 1] if self.index < len(self.token_list) else None
 
     def binary_operation(self, grammar, operators):
         result = ParseResult()
@@ -127,7 +133,7 @@ class Parser:
         result = ParseResult()
         current = self.ctoken
         if current.type == Constants.TYPE_KYW:
-            if current.value in Constants.KW_DATA_TYPES:
+            if current.value == Constants.KW_VAR:
                 self.next()
                 if self.ctoken.type != Constants.TYPE_IDN:
                     new_error = InvalidSyntaxError("Expected identifier", self.position.copy(), self.ctoken.width)
@@ -142,6 +148,9 @@ class Parser:
                 self.next()
 
                 if self.ctoken.type != Constants.TYPE_EQU:
+                    if self.ctoken.type in (Constants.TYPE_SMC, Constants.TYPE_EOF):
+                        return result.success(VariableDeclarationNode(identifier))
+
                     new_error = InvalidSyntaxError("Missing '=' in assignment", self.position.copy(), self.ctoken.width)
                     new_error.set_error_line(self.source[self.position.line - 1], [k.width for k in self.token_list],
                                              point=False)
@@ -157,15 +166,34 @@ class Parser:
                 if result.error:
                     return result
 
-                return result.success(VariableAssignmentNode(identifier, expression))
+                return result.success(VariableInitializationNode(identifier, expression))
 
+        elif self.ctoken.type in Constants.TYPE_IDN and len(self.token_list) > 3:
+            identifier = self.ctoken
+            next_token = self.lookahead()
+
+            if next_token.type != Constants.TYPE_EQU:
+                if result.error:
+                    return result
+
+                return self.binary_operation(self.term, (Constants.TYPE_ADD, Constants.TYPE_SUB))
+
+            self.next()
+            self.next()
+
+            value_expression = result.extract(self.expr())
+
+            return result.success(VariableAssignmentNode(identifier, value_expression))
         else:
+            # Default arithmetic root node;
             return self.binary_operation(self.term, (Constants.TYPE_ADD, Constants.TYPE_SUB))
 
     def parse(self) -> BinaryOperationNode:
         expression = self.expr()
 
         if not expression.error:
+            if self.debug_mode:
+                print(f"PARSER RESULT: {expression.node}")
             return expression.node
 
         expression.error.raise_error()

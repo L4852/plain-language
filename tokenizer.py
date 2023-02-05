@@ -5,7 +5,7 @@ from error import InvalidCharacterError
 
 
 class Tokenizer:
-    def __init__(self, source: str, filename: str = "<stdin>"):
+    def __init__(self, source: str, filename: str = "<stdin>", debug_mode=False):
         self.source = source
         self.src_len = len(source)
         self.position = Position(self.src_len)
@@ -14,6 +14,8 @@ class Tokenizer:
         self.char = None
 
         self.token_list = None
+
+        self.debug_mode = debug_mode
 
         self.next()
 
@@ -68,7 +70,7 @@ class Tokenizer:
                     token_list.append(Token(Constants.TYPE_INT, int(num_buffer), num_length, line_number=self.position.line))
                 num_buffer = ""
                 has_dot = False
-            elif idn_buffer and self.char in " \t\n;":
+            elif idn_buffer and self.char not in Constants.VALID_IDN:
                 idn_length = len(idn_buffer)
 
                 if idn_buffer not in Constants.KEYWORDS:
@@ -153,4 +155,8 @@ class Tokenizer:
         # Return the finished token list
         token_list.append(Token(Constants.TYPE_EOF, line_number=self.position.line))
         self.token_list = token_list
+
+        if self.debug_mode:
+            print(f"TOKENIZE RESULT: {token_list}")
+
         return token_list

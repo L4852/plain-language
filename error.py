@@ -16,6 +16,8 @@ class Error:
 
         self.error_line_number = -1
 
+        self.filename = "<stdin>"
+
     def set_error_line(self, error_line, token_widths: list = None, point: bool = True):
         self.error_line = error_line.strip('\n')
         self.token_widths = token_widths
@@ -32,7 +34,7 @@ class Error:
             active_context = self.context
 
             while active_context:
-                full_traceback_message += f"File \"<stdin>\", line {self.error_line_number} in {self.context.context_name}\n"
+                full_traceback_message += f"File \"{self.filename}\", line {self.error_line_number} in {self.context.context_name}\n"
                 active_context = active_context.parent_context
         else:
             full_traceback_message = f"File \"{self.pos.filename}\", line {self.pos.line}, column {self.pos.column}\n\t\t"
@@ -66,8 +68,12 @@ class InvalidSyntaxError(Error):
 
 
 class NewRuntimeError(Error):
-    def __init__(self, error_message, error_line_number=-1, context=None):
+    def __init__(self, error_message, error_line_number=-1, context=None, filename=""):
         super().__init__("RuntimeError", error_message)
         self.is_runtime_error = True
+
+        if filename:
+            self.filename = filename
+
         self.context = context
         self.error_line_number = error_line_number
