@@ -59,6 +59,8 @@ class Tokenizer:
             if start_of_line_index == -1:
                 start_of_line_index = 0
 
+
+
             # Check if number buffer is not empty, terminates number and creates new Token object if current character
             # is not a number.
             if num_buffer and self.char not in Constants.NUM_CHARS:
@@ -81,9 +83,8 @@ class Tokenizer:
                 idn_buffer = ""
 
             # Skip over character if it is a tab, space, or newline
-            if self.char in ' \t\n' or comment_active:
+            if self.char in ' \t\n':
                 # Keep track of the spaces to align Parser traceback
-
                 if self.char == '\n':
                     self.next()
                     start_of_line_index = self.position.main_pos
@@ -96,8 +97,9 @@ class Tokenizer:
             # Ignore the rest of the line if comment symbol detected
             elif self.char == '$':
                 comment_active = True
+                self.next()
             # Check if a valid int or float can be created
-            elif self.char in Constants.NUM_CHARS and not idn_buffer:
+            elif self.char in Constants.NUM_CHARS and not idn_buffer and not comment_active:
                 if self.char == Constants.NUMPOINT:
                     # Check if point already exists in the number buffer
                     if not has_dot:
@@ -128,12 +130,16 @@ class Tokenizer:
 
                 self.next()
             # Append symbol with corresponding type in Constants.TYPE_SYMBOLS
-            elif self.char in Constants.TYPE_SYMBOLS:
+            elif self.char in Constants.TYPE_SYMBOLS and not comment_active:
                 token_list.append(Token(Constants.TYPE_SYMBOLS[self.char], line_number=self.position.line))
                 self.next()
-            elif self.char in Constants.VALID_IDN:
+            elif self.char in Constants.VALID_IDN and not comment_active:
                 idn_buffer += self.char
                 self.next()
+
+            if comment_active:
+                self.next()
+                continue
 
             # Print the error if it exists after the end of the current line is reached
             if error_encountered:
@@ -153,10 +159,12 @@ class Tokenizer:
                     return []
 
         # Return the finished token list
-        token_list.append(Token(Constants.TYPE_EOF, line_number=self.position.line))
-        self.token_list = token_list
+        if len(token_list) > 1:
+            token_list.append(Token(Constants.TYPE_EOF, line_number=self.position.line))
+            self.token_list = token_list
 
-        if self.debug_mode:
-            print(f"TOKENIZE RESULT: {token_list}")
+            if self.debug_mode:
+                print(f"TOKENIZE RESULT: {token_list}")
 
-        return token_list
+            return token_list
+        return []

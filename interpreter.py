@@ -94,7 +94,10 @@ class Interpreter:
             if not self.context.symbol_table.exists(variable_name):
                 variable_value = self._visit(node.expression)
                 self.context.symbol_table.update(variable_name, variable_value)
-                return variable_value
+
+                if self.debug_mode:
+                    return variable_value
+                return None
             return NewRuntimeError(f"redefinition of '{variable_name}'", error_line_number=0,
                                    context=self.context).raise_error()
 
@@ -103,7 +106,9 @@ class Interpreter:
 
             variable_value = self._visit(node.expression)
             self.context.symbol_table.update(variable_name, variable_value)
-            return variable_value
+            if self.debug_mode:
+                return variable_value
+            return None
 
     def evaluate(self, node):
         completed = self._visit(node)

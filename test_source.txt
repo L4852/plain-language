@@ -1,4 +1,11 @@
-15 + 3 * -5; $ Hello, this is a comment on a line!
-$ 1 + 2 * 3;
-$ 5 - 8 * 6;
-$ 1 + 5..2;
+$ Run code from a file using the command-line: python plain.py <filename>
+
+var coolNum = 40;    $ Initialize variable;
+
+var b = coolNum + 1; $ Initialize another variable;
+
+1 + 5.2; $ Hello, this is a comment on a line!
+
+b; $ Print a variable;
+
+coolNum; $ Print another variable;

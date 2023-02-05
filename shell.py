@@ -1,5 +1,3 @@
-import pdb
-
 from context import Context
 from interpreter import SymbolTable, Interpreter
 from parser import Parser
