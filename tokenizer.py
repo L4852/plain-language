@@ -56,7 +56,7 @@ class Tokenizer:
 
         # Comment active flag
         comment_active: bool = False
-        
+
         # Identifier / keyword buffer
         idn_buffer = ""
 
@@ -111,16 +111,22 @@ class Tokenizer:
                 num_length = len(num_buffer)
 
                 if has_dot:
-                    token_list.append(Token(Constants.TYPE_FLT, float(num_buffer), num_length, line_number=self.position.line))
+                    token_list.append(
+                        Token(Constants.TYPE_FLT, float(num_buffer), num_length, line_number=self.position.line))
                 else:
-                    token_list.append(Token(Constants.TYPE_INT, int(num_buffer), num_length, line_number=self.position.line))
+                    token_list.append(
+                        Token(Constants.TYPE_INT, int(num_buffer), num_length, line_number=self.position.line))
                 num_buffer = ""
                 has_dot = False
             elif idn_buffer and self.char not in Constants.VALID_IDN and not string_buffer:
                 idn_length = len(idn_buffer)
 
-                if idn_buffer not in Constants.KEYWORDS:
+                if idn_buffer in Constants.COMPARISONS:
+                    token_list.append(Token(Constants.TYPE_SYMBOLS[idn_buffer], idn_buffer, idn_length,
+                                            line_number=self.position.line))
+                elif idn_buffer not in Constants.KEYWORDS:
                     token_list.append(Token(Constants.TYPE_IDN, idn_buffer, idn_length, line_number=self.position.line))
+
                 else:
                     token_list.append(Token(Constants.TYPE_KYW, idn_buffer, idn_length, line_number=self.position.line))
 

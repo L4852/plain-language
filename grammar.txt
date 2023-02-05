@@ -1,7 +1,12 @@
-expr : (TERM ADD | SUB)*
-     : KYW:[VAR] IDN
+expr : KYW:[VAR] IDN
      : KYW:[VAR] IDN EQU expr
      : IDN EQU expr
+     : (cexp AND | OR cexp)*
+     : NOT cexp
+cexp : (aexp EQU | LT | GT | LTE | GTE aexp)*
+
+aexp : (TERM ADD | SUB)*
+
 
 term: (FACT MUL | DIV)*
 

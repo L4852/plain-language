@@ -10,4 +10,6 @@ b; $ Print a variable;
 
 coolNum; $ Print another variable;
 
-var a = hello world!
+var a = 'hello world!';
+
+$ if (not a eq b) (a lte not b)

@@ -18,8 +18,18 @@ class Constants:
     KW_CWH = 'while'
     KW_CFR = 'for'
     KW_VAR = 'var'
+    KW_DEF = 'def'
+    KW_AND = 'and'
+    KW_OR = 'or'
+    KW_NOT = 'not'
+    KW_EQU = 'eq'
+    KW_NEQ = 'neq'
+    KW_GTE = 'gte',
+    KW_LTE = 'lte'
 
-    KEYWORDS = [KW_CIF, KW_CWH, KW_CFR, KW_VAR]
+    COMPARISONS = [KW_AND, KW_OR, KW_NOT, KW_EQU, KW_NEQ, KW_LTE, KW_GTE]
+
+    KEYWORDS = [KW_CIF, KW_CWH, KW_CFR, KW_VAR, KW_DEF]
 
     KW_DATA_TYPES = [KW_INT, KW_FLT, KW_BOL, KW_STR]
 
@@ -58,7 +68,16 @@ class Constants:
         '[': 'LSB',
         ']': 'RSB',
         '{': 'LCB',
-        '}': 'RCB'
+        '}': 'RCB',
+        'eq': 'EQU',
+        'lt': 'CLT',
+        'gt': 'CGT',
+        'gte': 'GTE',
+        'lte': 'LTE',
+        'neq': 'NEQ',
+        'and': 'AND',
+        'or': 'OR',
+        'not': 'NOT'
     }
 
     TYPE_SYMBOLS.update(OPERATORS)
