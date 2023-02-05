@@ -18,6 +18,10 @@ def main():
 
         if user_input:
             token_list = Tokenizer(user_input, debug_mode=debug).tokenize()
+
+            if not token_list:
+                continue
+
             abstract_syntax_tree = Parser(token_list, user_input, debug_mode=debug).parse()
             output, global_context = Interpreter(user_input, global_context, filename=None, debug_mode=debug).evaluate(abstract_syntax_tree)
 
