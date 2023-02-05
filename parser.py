@@ -1,6 +1,6 @@
 from constants import Constants
 from error import InvalidSyntaxError
-from nodes import NumberNode, BinaryOperationNode, UnaryOperationNode
+from nodes import NumberNode, BinaryOperationNode, UnaryOperationNode, VariableAssignmentNode, VariableNode
 from position import Position
 
 
@@ -109,6 +109,10 @@ class Parser:
 
             return result.success(UnaryOperationNode(operator, factor))
 
+        elif token.type == Constants.TYPE_IDN:
+            self.next()
+            return result.success(VariableNode(token))
+
         new_error = InvalidSyntaxError("invalid syntax", self.position.copy(), self.ctoken.width)
         new_error.set_error_line(self.source[self.position.line - 1], [k.width for k in self.token_list], point=False)
 
@@ -120,7 +124,43 @@ class Parser:
         return self.binary_operation(self.fact, (Constants.TYPE_MUL, Constants.TYPE_DIV))
 
     def expr(self):
-        return self.binary_operation(self.term, (Constants.TYPE_ADD, Constants.TYPE_SUB))
+        result = ParseResult()
+        current = self.ctoken
+        if current.type == Constants.TYPE_KYW:
+            if current.value in Constants.KW_DATA_TYPES:
+                self.next()
+                if self.ctoken.type != Constants.TYPE_IDN:
+                    new_error = InvalidSyntaxError("Expected identifier", self.position.copy(), self.ctoken.width)
+                    new_error.set_error_line(self.source[self.position.line - 1], [k.width for k in self.token_list],
+                                             point=False)
+
+                    encapsulated_error = result.failure(new_error)
+
+                    return encapsulated_error
+
+                identifier = self.ctoken
+                self.next()
+
+                if self.ctoken.type != Constants.TYPE_EQU:
+                    new_error = InvalidSyntaxError("Missing '=' in assignment", self.position.copy(), self.ctoken.width)
+                    new_error.set_error_line(self.source[self.position.line - 1], [k.width for k in self.token_list],
+                                             point=False)
+
+                    encapsulated_error = result.failure(new_error)
+
+                    return encapsulated_error
+
+                self.next()
+
+                expression = result.extract(self.expr())
+
+                if result.error:
+                    return result
+
+                return result.success(VariableAssignmentNode(identifier, expression))
+
+        else:
+            return self.binary_operation(self.term, (Constants.TYPE_ADD, Constants.TYPE_SUB))
 
     def parse(self) -> BinaryOperationNode:
         expression = self.expr()

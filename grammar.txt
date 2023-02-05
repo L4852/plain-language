@@ -1,6 +1,6 @@
 expr : (TERM ADD | SUB)*
      : KYW:[TYPE] IDN
-     : KYW:[TYPE] IDN EQU [TYPE:VALUE]
+     : KYW:[TYPE] IDN EQU expr
 
 term: (FACT ADD | SUB)*
 

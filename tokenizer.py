@@ -63,18 +63,19 @@ class Tokenizer:
                 num_length = len(num_buffer)
 
                 if has_dot:
-                    token_list.append(Token(Constants.TYPE_FLT, float(num_buffer), num_length))
+                    token_list.append(Token(Constants.TYPE_FLT, float(num_buffer), num_length, line_number=self.position.line))
                 else:
-                    token_list.append(Token(Constants.TYPE_INT, int(num_buffer), num_length))
+                    token_list.append(Token(Constants.TYPE_INT, int(num_buffer), num_length, line_number=self.position.line))
                 num_buffer = ""
                 has_dot = False
-            elif idn_buffer and self.char in " \t\n":
+            elif idn_buffer and self.char in " \t\n;":
                 idn_length = len(idn_buffer)
-                
+
                 if idn_buffer not in Constants.KEYWORDS:
-                    token_list.append(Token(Constants.TYPE_IDN, idn_buffer, idn_length))
+                    token_list.append(Token(Constants.TYPE_IDN, idn_buffer, idn_length, line_number=self.position.line))
                 else:
-                    token_list.append(Token(Constants.TYPE_KYW, idn_buffer, idn_length))
+                    token_list.append(Token(Constants.TYPE_KYW, idn_buffer, idn_length, line_number=self.position.line))
+
                 idn_buffer = ""
 
             # Skip over character if it is a tab, space, or newline
@@ -94,7 +95,7 @@ class Tokenizer:
             elif self.char == '$':
                 comment_active = True
             # Check if a valid int or float can be created
-            elif self.char in Constants.NUM_CHARS and not (idn_buffer):
+            elif self.char in Constants.NUM_CHARS and not idn_buffer:
                 if self.char == Constants.NUMPOINT:
                     # Check if point already exists in the number buffer
                     if not has_dot:
@@ -126,10 +127,11 @@ class Tokenizer:
                 self.next()
             # Append symbol with corresponding type in Constants.TYPE_SYMBOLS
             elif self.char in Constants.TYPE_SYMBOLS:
-                token_list.append(Token(Constants.TYPE_SYMBOLS[self.char]))
+                token_list.append(Token(Constants.TYPE_SYMBOLS[self.char], line_number=self.position.line))
                 self.next()
             elif self.char in Constants.VALID_IDN:
                 idn_buffer += self.char
+                self.next()
 
             # Print the error if it exists after the end of the current line is reached
             if error_encountered:
@@ -149,6 +151,6 @@ class Tokenizer:
                     return []
 
         # Return the finished token list
-        token_list.append(Token(Constants.TYPE_EOF))
+        token_list.append(Token(Constants.TYPE_EOF, line_number=self.position.line))
         self.token_list = token_list
         return token_list

@@ -7,6 +7,19 @@ class Constants:
 
     NUMPOINT = '.'
 
+    KW_INT = 'int'
+    KW_FLT = 'flt'
+    KW_BOL = 'bol'
+    KW_STR = 'str'
+    KW_CIF = 'if'
+    KW_CEL = 'else'
+    KW_CWH = 'while'
+    KW_CFR = 'for'
+
+    KEYWORDS = [KW_INT, KW_FLT, KW_BOL, KW_STR, KW_CIF, KW_CWH, KW_CFR]
+
+    KW_DATA_TYPES = [KW_INT, KW_FLT, KW_BOL, KW_STR]
+
     TYPE_FLT = 'FLT'
     TYPE_INT = 'INT'
     TYPE_MUL = 'MUL'
@@ -20,6 +33,9 @@ class Constants:
     TYPE_KYW = 'KYW'
     TYPE_IDN = 'IDN'
 
+    TYPE_SMC = 'SMC'
+    TYPE_EQU = 'EQU'
+
     OPERATORS = {
         '+': TYPE_ADD,
         '-': TYPE_SUB,
@@ -29,6 +45,7 @@ class Constants:
 
     TYPE_SYMBOLS = {
         ';': 'SMC',
+        '=': 'EQU',
         '(': 'LPA',
         ')': 'RPA',
         '[': 'LSB',
